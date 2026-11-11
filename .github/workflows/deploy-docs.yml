@@ -1,11 +1,14 @@
 name: Deploy Documentation Site
 
+# Original triggers preserved; manual-only for test cost control.
+# on:
+#   push:
+#     branches:
+#       - docs-site
+#   pull_request:
+#   merge_group:
+#   workflow_dispatch:
 on:
-  push:
-    branches:
-      - docs-site
-  pull_request:
-  merge_group:
   workflow_dispatch:
 
 concurrency:

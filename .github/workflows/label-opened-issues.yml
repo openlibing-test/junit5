@@ -1,8 +1,11 @@
 name: Add label to opened issues
+# Original triggers preserved; manual-only for test cost control.
+# on:
+#   issues:
+#     types:
+#       - opened
 on:
-  issues:
-    types:
-      - opened
+  workflow_dispatch:
 jobs:
   label_issues:
     runs-on: ubuntu-latest

@@ -1,8 +1,11 @@
 name: Codeberg
 
+# Original triggers preserved; manual-only for test cost control.
+# on:
+#   schedule:
+#     - cron: "59 * * * *"
 on:
-  schedule:
-    - cron: "59 * * * *"
+  workflow_dispatch:
 
 permissions:
   contents: read

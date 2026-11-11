@@ -1,16 +1,19 @@
 name: CI
 
+# Original triggers preserved; manual-only for test cost control.
+# on:
+#   push:
+#     branches:
+#       - main
+#       - 'releases/**'
+#     tags-ignore:
+#       - '**'
+#   pull_request:
+#   merge_group:
+#   schedule:
+#     - cron: '33 17 * * 0'
+#   workflow_dispatch:
 on:
-  push:
-    branches:
-      - main
-      - 'releases/**'
-    tags-ignore:
-      - '**'
-  pull_request:
-  merge_group:
-  schedule:
-    - cron: '33 17 * * 0'
   workflow_dispatch:
 
 permissions: {}

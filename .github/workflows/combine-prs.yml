@@ -1,8 +1,11 @@
 name: Combine PRs
 
+# Original triggers preserved; manual-only for test cost control.
+# on:
+#   schedule:
+#     - cron: '0 0 * * *' # Every day at 00:00 UTC
+#   workflow_dispatch:
 on:
-  schedule:
-    - cron: '0 0 * * *' # Every day at 00:00 UTC
   workflow_dispatch:
 
 jobs:

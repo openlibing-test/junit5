@@ -1,15 +1,18 @@
 name: Cross-Version
 
+# Original triggers preserved; manual-only for test cost control.
+# on:
+#   schedule:
+#     - cron: '0 0 * * 6' # Every Saturday at 00:00 UTC
+#   push:
+#     branches:
+#       - main
+#       - 'releases/**'
+#   pull_request:
+#     branches:
+#       - '*'
 on:
-  schedule:
-    - cron: '0 0 * * 6' # Every Saturday at 00:00 UTC
-  push:
-    branches:
-      - main
-      - 'releases/**'
-  pull_request:
-    branches:
-      - '*'
+  workflow_dispatch:
 
 env:
   DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}

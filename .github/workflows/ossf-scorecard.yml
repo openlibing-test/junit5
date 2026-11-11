@@ -1,11 +1,14 @@
 name: OpenSSF Scorecard supply-chain security analysis
 
+# Original triggers preserved; manual-only for test cost control.
+# on:
+#   branch_protection_rule:
+#   schedule:
+#     - cron: '31 20 * * 6'
+#   push:
+#     branches: [ "main" ]
 on:
-  branch_protection_rule:
-  schedule:
-    - cron: '31 20 * * 6'
-  push:
-    branches: [ "main" ]
+  workflow_dispatch:
 
 permissions: {}
 

@@ -1,15 +1,18 @@
 name: GitHub Actions Security Analysis
 
+# Original triggers preserved; manual-only for test cost control.
+# on:
+#   push:
+#     branches:
+#       - main
+#       - 'releases/**'
+#     paths:
+#       - '.github/**'
+#   pull_request:
+#     paths:
+#       - '.github/**'
 on:
-  push:
-    branches:
-      - main
-      - 'releases/**'
-    paths:
-      - '.github/**'
-  pull_request:
-    paths:
-      - '.github/**'
+  workflow_dispatch:
 
 permissions: {}
 

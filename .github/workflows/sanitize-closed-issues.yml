@@ -1,8 +1,11 @@
 name: Sanitizes assigned labels and milestone on closed issues
+# Original triggers preserved; manual-only for test cost control.
+# on:
+#   issues:
+#     types:
+#       - closed
 on:
-  issues:
-    types:
-      - closed
+  workflow_dispatch:
 permissions: {}
 jobs:
   label_issues:

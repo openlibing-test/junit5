@@ -1,7 +1,10 @@
 name: Close inactive issues and PRs
+# Original triggers preserved; manual-only for test cost control.
+# on:
+#   schedule:
+#     - cron: "30 1 * * *"
+#   workflow_dispatch:
 on:
-  schedule:
-    - cron: "30 1 * * *"
   workflow_dispatch:
 permissions: {}
 jobs:

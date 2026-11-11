@@ -1,8 +1,11 @@
 name: Lock resolved issues
 
+# Original triggers preserved; manual-only for test cost control.
+# on:
+#   schedule:
+#     - cron: "39 1 * * 0"
+#   workflow_dispatch:
 on:
-  schedule:
-    - cron: "39 1 * * 0"
   workflow_dispatch:
 
 permissions: {}

@@ -1,13 +1,16 @@
 name: CI
 
+# Original triggers preserved; manual-only for test cost control.
+# on:
+#   push:
+#     branches:
+#       - main
+#       - 'releases/**'
+#   pull_request:
+#     branches:
+#       - '*'
 on:
-  push:
-    branches:
-      - main
-      - 'releases/**'
-  pull_request:
-    branches:
-      - '*'
+  workflow_dispatch:
 
 env:
   ENTERPRISE_TESTDISTRIBUTION_ENABLED: true

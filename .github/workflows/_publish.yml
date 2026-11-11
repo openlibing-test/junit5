@@ -1,7 +1,10 @@
 name: CI
 
+# Original triggers preserved; manual-only for test cost control.
+# on:
+#   workflow_call:
 on:
-  workflow_call:
+  workflow_dispatch:
 
 permissions: {}
 

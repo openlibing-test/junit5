@@ -1,15 +1,18 @@
 name: CI
 
+# Original triggers preserved; manual-only for test cost control.
+# on:
+#   push:
+#     branches:
+#       - main
+#       - 'releases/**'
+#     tags-ignore:
+#       - '**'
+#   pull_request:
+#     branches:
+#       - '**'
 on:
-  push:
-    branches:
-      - main
-      - 'releases/**'
-    tags-ignore:
-      - '**'
-  pull_request:
-    branches:
-      - '**'
+  workflow_dispatch:
 
 concurrency:
   # Cancels in-progress runs only for pull requests

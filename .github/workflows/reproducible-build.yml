@@ -1,13 +1,16 @@
 name: Reproducible build
 
+# Original triggers preserved; manual-only for test cost control.
+# on:
+#   push:
+#     branches:
+#     - main
+#     - 'releases/*'
+#   pull_request:
+#     branches:
+#     - '*'
 on:
-  push:
-    branches:
-    - main
-    - 'releases/*'
-  pull_request:
-    branches:
-    - '*'
+  workflow_dispatch:
 
 env:
   ORG_GRADLE_PROJECT_org.gradle.java.installations.auto-download: 'false'

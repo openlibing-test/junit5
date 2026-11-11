@@ -1,6 +1,9 @@
 name: Codeberg
 
-on: [ push ]
+# Original triggers preserved; manual-only for test cost control.
+# on: [ push ]
+on:
+  workflow_dispatch:
 
 permissions:
   contents: read

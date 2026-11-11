@@ -1,7 +1,10 @@
 name: Reproducible build
 
+# Original triggers preserved; manual-only for test cost control.
+# on:
+#   workflow_call:
 on:
-  workflow_call:
+  workflow_dispatch:
 
 permissions:
   packages: read # to download the Develocity Artifact Cache CLI from GitHub Packages

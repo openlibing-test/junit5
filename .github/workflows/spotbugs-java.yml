@@ -84,6 +84,8 @@ jobs:
         with:
           sarif_file: build/reports/spotbugs/spotbugs.sarif
           source_path: .
+      - name: Verify uploaded source snippets
+        run: python3 .github/spotbugs/verify-sarif.py --after-upload
       - name: Preserve scan evidence
         if: always()
         uses: actions/upload-artifact@v4

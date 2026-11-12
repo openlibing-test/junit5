@@ -1,0 +1,25 @@
+// Keep validation-specific configuration outside the production build.
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+    def modules = root.subprojects.findAll {
+        it.name.startsWith('junit-') && it.extensions.findByName('sourceSets') != null
+    }
+    root.tasks.register('spotbugsInputs') {
+        modules.each { module ->
+            dependsOn(module.tasks.named(module.sourceSets.main.classesTaskName))
+        }
+        doLast {
+            def output = new File(root.buildDir, 'spotbugs-inputs')
+            output.mkdirs()
+            def classes = modules.collectMany { it.sourceSets.main.output.classesDirs.files.toList() }
+                .findAll { it.isDirectory() && !root.fileTree(it).matching { include '**/*.class' }.isEmpty() }
+            if (classes.isEmpty()) throw new GradleException('No production bytecode found')
+            def auxiliary = modules.collectMany { it.sourceSets.main.compileClasspath.files.toList() }
+                .findAll { it.exists() }.unique()
+            new File(output, 'classes.txt').text = classes.collect { it.absolutePath }.join('\n') + '\n'
+            new File(output, 'auxclasspath.txt').text = auxiliary.collect { it.absolutePath }.join('\n') + '\n'
+            new File(output, 'modules.txt').text = modules.collect { it.path }.join('\n') + '\n'
+            println "SpotBugs inputs: ${classes.size()} class directories across ${modules.size()} Java modules"
+        }
+    }
+}

@@ -1,0 +1,81 @@
+name: SpotBugs documentation verification
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [validation/spotbugs-docs]
+    paths:
+      - .github/workflows/spotbugs-java.yml
+      - .github/spotbugs/**
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  documented-maven-baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Compile exactly as documented (expected failure on Gradle repository)
+        run: mvn -B clean package -DskipTests
+      - name: Scan exactly as documented
+        run: mvn -B spotbugs:spotbugs
+
+  gradle-adaptation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+      - name: Compile production modules and export analysis inputs
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-configuration-cache -Dorg.gradle.unsafe.isolated-projects=false -I .github/spotbugs/analysis.init.gradle spotbugsInputs --stacktrace
+      - name: Install documented SpotBugs and FindSecBugs versions
+        run: |
+          curl --fail --location --retry 3 https://github.com/spotbugs/spotbugs/releases/download/4.10.2/spotbugs-4.10.2.tgz -o "$RUNNER_TEMP/spotbugs.tgz"
+          tar -xzf "$RUNNER_TEMP/spotbugs.tgz" -C "$RUNNER_TEMP"
+          curl --fail --location --retry 3 https://repo.maven.apache.org/maven2/com/h3xstream/findsecbugs/findsecbugs-plugin/1.14.0/findsecbugs-plugin-1.14.0.jar -o "$RUNNER_TEMP/findsecbugs.jar"
+      - name: Analyze production bytecode
+        run: |
+          mkdir -p build/reports/spotbugs
+          java -Xmx3g -jar "$RUNNER_TEMP/spotbugs-4.10.2/lib/spotbugs.jar" -textui \
+            -effort:max -low -sarif=build/reports/spotbugs/spotbugs.sarif \
+            -pluginList "$RUNNER_TEMP/findsecbugs.jar" \
+            -auxclasspathFromFile build/spotbugs-inputs/auxclasspath.txt \
+            -analyzeFromFile build/spotbugs-inputs/classes.txt
+      - name: Validate SARIF and source locations
+        run: python3 .github/spotbugs/verify-sarif.py
+      - name: Checkout private uploader (temporary until public)
+        uses: actions/checkout@v4
+        with:
+          repository: openlibing-test/upload-sarif-action
+          ref: 0fd322c74908e464f6df593b0a914f66fc287482
+          token: ${{ secrets.PRIVATE_ACTIONS_READ_TOKEN }}
+          path: .private-actions/upload-sarif-action
+          persist-credentials: false
+      - name: Upload SARIF to openLiBing
+        uses: ./.private-actions/upload-sarif-action
+        with:
+          sarif_file: build/reports/spotbugs/spotbugs.sarif
+          source_path: .
+      - name: Preserve scan evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: spotbugs-verification
+          path: |
+            build/reports/spotbugs/
+            build/spotbugs-inputs/
+          if-no-files-found: warn

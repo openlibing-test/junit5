@@ -24,9 +24,19 @@ jobs:
           distribution: temurin
           java-version: '21'
       - name: Compile exactly as documented (expected failure on Gradle repository)
+        id: baseline
+        continue-on-error: true
         run: mvn -B clean package -DskipTests
       - name: Scan exactly as documented
+        if: steps.baseline.outcome == 'success'
         run: mvn -B spotbugs:spotbugs
+      - name: Record documented baseline outcome
+        env:
+          BASELINE_OUTCOME: ${{ steps.baseline.outcome }}
+        run: |
+          echo "Documented Maven compilation: $BASELINE_OUTCOME (JUnit uses Gradle, no root pom.xml)." >> "$GITHUB_STEP_SUMMARY"
+          test "$BASELINE_OUTCOME" = failure
+          test ! -f pom.xml
 
   gradle-adaptation:
     runs-on: ubuntu-latest
@@ -38,6 +48,10 @@ jobs:
         with:
           distribution: temurin
           java-version: '25'
+      - name: Check private action credential availability
+        env:
+          PRIVATE_ACTIONS_READ_TOKEN: ${{ secrets.PRIVATE_ACTIONS_READ_TOKEN }}
+        run: test -n "$PRIVATE_ACTIONS_READ_TOKEN" || { echo 'PRIVATE_ACTIONS_READ_TOKEN is unavailable to this repository'; exit 1; }
       - name: Compile production modules and export analysis inputs
         run: |
           chmod +x gradlew

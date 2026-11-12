@@ -2,7 +2,7 @@
 gradle.projectsEvaluated {
     def root = gradle.rootProject
     def modules = root.subprojects.findAll {
-        it.name.startsWith('junit-') && it.extensions.findByName('sourceSets') != null
+        it.name.startsWith('junit-') && it.extensions.findByName('sourceSets')?.findByName('main') != null
     }
     root.tasks.register('spotbugsInputs') {
         modules.each { module ->
